@@ -37,7 +37,8 @@ for artist in allArtists[0].unique():
     allFollowers['MetricDate'] = pd.to_datetime(allFollowers['MetricDate'])
     allFollowers['Followers'] = pd.to_numeric(allFollowers['Followers'])
         
-    # For each chart
+    lastPosition = 0
+    # For each chart   
     for chartDate in charts['ChartDate'].unique():
         # Get chart for the date
         chart = charts.loc[charts['ChartDate'] == chartDate]
@@ -88,7 +89,6 @@ for artist in allArtists[0].unique():
         else:
             weekAvgFollowersGained = 0
 
-        
         # Compare overall social media data to this week and generate more features
         avgMentionsChange = weekAvgMentions - overallAvgMentions
         if (overallAvgMentions != 0):
@@ -104,32 +104,44 @@ for artist in allArtists[0].unique():
                 
         # Get features from chart data
         artistEntry = chart.loc[chart['Artist'] == artist]
+        
         # If artist charted, get latest chart info
         if len(artistEntry) == 1:
             position = int(artistEntry['CurrentPosition'].iloc[0])
-            lastPosition = int(artistEntry['LastPosition'].iloc[0])
+            # If this is the first chart we're looking at
+            if lastPosition == 0: 
+                # Only trust the chart's last position if we're on the first chart; it can often be wrong for the #1 spot
+                lastPosition = int(artistEntry['LastPosition'].iloc[0])
             positionChange = lastPosition - position
             weeksOnChart = int(artistEntry['WeeksOnChart'].iloc[0]) - 1 # Weeks on chart BEFORE this chart (that way we aren't "cheating" if using vectors for test data)
         
         # If artist didn't chart, see if they've charted before in our data
         else:
             position = 101 # Assign 101 as "off chart" position
-            pastCharts = charts.loc[(charts['Artist'] == artist) & (charts['ChartDate'] < chartDate)].sort_values('ChartDate', ascending=False)
-            
-            # If so, get some position info from that
-            if len(pastCharts) > 0:
-                lastPosition = int(pastCharts['CurrentPosition'].iloc[0])
-                positionChange = lastPosition - 101
-                weeksOnChart = int(pastCharts['WeeksOnChart'].iloc[0])
-            
-            # If not, zeros
-            else:
+            if lastPosition == 0: 
+                # If this is our first chart, assume they didn't chart previous week either
                 lastPosition = 101
-                positionChange = 0
-                weeksOnChart = 0 # Hmm... this may not be true if the artist has charted previously, and they will chart later in our data - maybe we should make "weeks on chart" only the weeks they chart in the training data
+            positionChange = lastPosition - 101
+
+            pastCharts = charts.loc[(charts['Artist'] == artist) & (charts['ChartDate'] < chartDate)].sort_values('ChartDate', ascending=False)
+            futureCharts = charts.loc[(charts['Artist'] == artist) & (charts['ChartDate'] > chartDate)].sort_values('ChartDate')
             
+            # If past chart entries found, get weeks on chart from most recent one
+            if len(pastCharts) > 0:
+                weeksOnChart = int(pastCharts['WeeksOnChart'].iloc[0])
+            else:
+                # If future chart entries found, get weeks on chart from soonest one (this is not "cheating" since we subtract 1, and we should have access to this number anyway)
+                if len(futureCharts) > 0:
+                    weeksOnChart = int(futureCharts['WeeksOnChart'].iloc[0]) - 1
+            
+                # If not, zero for weeks on chart (this case shouldn't happen for anyone important because all of our artists charted in the past year)
+                else:
+                    weeksOnChart = 0
+        
+        # Add feature vector and set last position to whatever chart position got chosen here
         featureVectors.append([chartDate, artist, position, lastPosition, positionChange, weeksOnChart, overallAvgMentions, weekAvgMentions, avgMentionsChange, avgMentionsRate, overallAvgFollowers, overallMaxFollowers, overallAvgFollowersGained, weekAvgFollowersGained, avgFollowersGainedChange, avgFollowersGainedRate])
-    
+        lastPosition = position
+        
     print("Feature vectors for " + artist + " generated.")
         
 with open('output/feature vectors.csv', 'w+', newline='') as outputFile:
