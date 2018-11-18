@@ -1,1 +1,100 @@
+1: Lady Gaga
+2: Drake
+3: Post Malone
+4: Cardi B
+5: Ariana Grande
+6: Imagine Dragons
+7: Juice WRLD
+8: Halsey
+9: XXXTENTACION
+10: Travis Scott
+11: Joji
+12: Khalid
+13: Eminem
+14: BTS
+15: Ed Sheeran
+16: Queen
+17: Maroon 5
+18: Lauren Daigle
+19: Shawn Mendes
+20: Panic! At The Disco
+21: Luke Combs
+22: Ella Mai
+23: Disturbed
+24: 5 Seconds Of Summer
+25: Lil Baby
+26: Michael Jackson
+27: Lil Wayne
+28: twenty one pilots
+29: John Legend
+30: Marshmello
+31: Bruno Mars
+32: Dan + Shay
+33: Camila Cabello
+34: Kane Brown
+35: Kodak Black
+36: Taylor Swift
+37: Kanye West
+38: P!nk
+39: Cher
+40: Chris Stapleton
+41: Greta Van Fleet
+42: EXO
+43: Billie Eilish
+44: Bradley Cooper
+45: Dua Lipa
+46: Pentatonix
+47: Bebe Rexha
+48: Tyga
+49: Sheck Wes
+50: Bad Bunny
+51: Grateful Dead
+52: 6ix9ine
+53: Nicki Minaj
+54: Selena Gomez
+55: Tory Lanez
+56: Florida Georgia Line
+57: NF
+58: Jason Aldean
+59: Bazzi
+60: Josh Turner
+61: Thomas Rhett
+62: Bastille
+63: lovelytheband
+64: Kendrick Lamar
+65: Gunna
+66: Future
+67: DJ Snake
+68: Carrie Underwood
+69: Eric Church
+70: Quavo
+71: Robyn
+72: The Chainsmokers
+73: Lauv
+74: Jimmie Allen
+75: Steve Aoki
+76: Brett Young
+77: Swae Lee
+78: Bobby "Boris" Pickett And The Crypt-Kickers
+79: Andrea Bocelli
+80: YoungBoy Never Broke Again
+81: NCT
+82: Rihanna
+83: Lukas Graham
+84: Maren Morris
+85: Zedd
+86: Lil Pump
+87: Lynyrd Skynyrd
+88: Adele
+89: Metallica
+90: Migos
+91: The Weeknd
+92: J Balvin
+93: Normani
+94: Justin Bieber
+95: Luke Bryan
+96: Mitchell Tenpenny
+97: Ozuna
+98: Offset
+99: Kenny Chesney
 100: Thom Yorke

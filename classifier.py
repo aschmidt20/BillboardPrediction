@@ -4,8 +4,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from itertools import combinations
 from sklearn.metrics import mean_squared_error
+import math
+import numpy as np
 
-#Load feautre vector data into dataframe
+#Load feature vector data into dataframe
 path = 'featurevectors.csv'
 feature_vectors = pd.read_csv(path)
 
@@ -27,7 +29,7 @@ def getData(artist1, artist2, dataByArtist):
     iter = 0
     artist1_data = dataByArtist[artist1]
     artist2_data = dataByArtist[artist2]
-    while iter < len(artist1_data):
+    while iter < len(artist1_data) - 1: # Leave out most recent week for testing
         # print(artist1_data[iter])
         # Check whether chart position of artist 1 is greater than artist 2
         position1 = int(artist1_data[iter][7])
@@ -107,8 +109,8 @@ for entry in combinations:
             Y.append(individualY[iter])
             iter += 1
 
-print(len(X))
-print(len(Y))
+#print(len(X))
+#print(len(Y))
 
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
 
@@ -128,7 +130,7 @@ while iter < len(y_pred):
 percentage = (correct / total) * 100
 print("Correct: " + str(correct))
 print("Total: " + str(total))
-print("Percentage Predicted: " + str(percentage) + "%")
+print("Percentage Predicted: " + str(percentage) + "%\n")
 
 
 X = []
@@ -185,13 +187,106 @@ iter = 1
 ranking = ranking[:100]
 string = ""
 while (iter-1) < 100:
-    string = str(iter) + ": " + ranking[iter-1]
-    print(string)
+    string += str(iter) + ": " + ranking[iter-1]
     string += '\n'
     iter += 1
 
+print(string)
 f.write(string)
 f.close()
 
+# Calculates RMSE based on distances of artist rankings between an actual and predicted chart - pass in arrays of artist names sorted by rank
+def chartRMSE(actualChart, predChart):
+    actualRanks = []
+    predRanks = []
+    
+    iter = 1
+    for artist in actualChart:      
+        try:
+            predRank = predChart.index(artist)
+        except:
+            predRank = 101
+        
+        actualRanks.append(iter)
+        predRanks.append(predRank)
+        
+        iter += 1
+        
+    iter = 1
+    for artist in predChart:
+        if artist not in actualChart:
+            actualRanks.append(101)
+            predRanks.append(iter)
+    iter += 1
+    
+    rmse = math.sqrt(mean_squared_error(actualRanks,predRanks))
+    return rmse
 
+# Calculates chart RMSE but only considering artists which are correctly predicted to be on the chart (no big penalties for missing artists or charting uncharted artists)
+def chartRMSE_matchesOnly(actualChart, predChart):
+    actualRanks = []
+    predRanks = []
+    
+    iter = 1
+    for artist in actualChart:      
+        try:
+            predRank = predChart.index(artist)
+        except:
+            continue
+        
+        actualRanks.append(iter)
+        predRanks.append(predRank)
+              
+        iter += 1
+            
+    rmse = math.sqrt(mean_squared_error(actualRanks,predRanks))
+    return rmse
 
+# Calculates proportion of chart entries shared between predicted and actual chart
+def chartOverlap(actualChart, predChart):
+    overlap = list(set(actualChart).intersection(set(predChart)))
+    prop = float(len(overlap))/len(actualChart)
+    return prop
+
+# Evaluation, comparison of charts
+feature_vectors['ChartDate'] = pd.to_datetime(feature_vectors['ChartDate'])    
+
+chartDate = max(feature_vectors['ChartDate'])
+actualChart = ((feature_vectors.loc[(feature_vectors['ChartDate'] == chartDate)].sort_values('Position'))[['ChartDate','ArtistName','Position']])[:100]
+
+prevChartDate = chartDate + np.timedelta64(-7,'D')
+prevChart = ((feature_vectors.loc[(feature_vectors['ChartDate'] == prevChartDate)].sort_values('Position'))[['ChartDate','ArtistName','Position']])[:100]
+
+# Evaluate predicted chart
+predRMSE = chartRMSE(actualChart['ArtistName'].tolist(), ranking)
+predRMSEMatchesOnly = chartRMSE_matchesOnly(actualChart['ArtistName'].tolist(), ranking)
+predOverlap = chartOverlap(actualChart['ArtistName'].tolist(), ranking)
+
+predRMSETop10 = chartRMSE(actualChart['ArtistName'].tolist()[:10], ranking[:10])
+predRMSETop10MatchesOnly = chartRMSE_matchesOnly(actualChart['ArtistName'].tolist()[:10], ranking[:10])
+predOverlapTop10 = chartOverlap(actualChart['ArtistName'].tolist()[:10], ranking[:10])
+
+# Evaluate previous chart baseline
+prevRMSE = chartRMSE(actualChart['ArtistName'].tolist(), prevChart['ArtistName'].tolist())
+prevRMSEMatchesOnly = chartRMSE_matchesOnly(actualChart['ArtistName'].tolist(), prevChart['ArtistName'].tolist())
+prevOverlap = chartOverlap(actualChart['ArtistName'].tolist(), prevChart['ArtistName'].tolist())
+
+prevRMSETop10 = chartRMSE(actualChart['ArtistName'].tolist()[:10], prevChart['ArtistName'].tolist()[:10])
+prevRMSETop10MatchesOnly = chartRMSE_matchesOnly(actualChart['ArtistName'].tolist()[:10], prevChart['ArtistName'].tolist()[:10])
+prevOverlapTop10 = chartOverlap(actualChart['ArtistName'].tolist()[:10], prevChart['ArtistName'].tolist()[:10])
+
+print('Predicted chart RMSE: ' + str(predRMSE))
+print('Predicted chart RMSE (matches only): ' + str(predRMSEMatchesOnly))
+print('Predicted chart overlap with actual chart: ' + str(predOverlap) + '\n')
+
+print('Predicted top 10 RMSE: ' + str(predRMSETop10))
+print('Predicted top 10 RMSE (matches only): ' + str(predRMSETop10MatchesOnly))
+print('Predicted top 10 overlap with actual top 10: ' + str(predOverlapTop10)  + '\n')
+
+print('Previous chart baseline RMSE: ' + str(prevRMSE))
+print('Previous chart baseline RMSE (matches only): ' + str(prevRMSETop10MatchesOnly))
+print('Previous chart baseline overlap with actual chart: ' + str(prevOverlap)  + '\n')
+
+print('Previous top 10 baseline RMSE: ' + str(prevRMSETop10))
+print('Previous top 10 baseline RMSE (matches only): ' + str(prevRMSETop10MatchesOnly))
+print('Previous top 10 baseline overlap with actual top 10: ' + str(prevOverlapTop10)  + '\n')
