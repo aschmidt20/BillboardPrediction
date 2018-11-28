@@ -6,21 +6,52 @@ from itertools import combinations
 from sklearn.metrics import mean_squared_error
 import math
 import numpy as np
+import csv
+from os import listdir
+from os.path import isfile, join
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+import twitter
+api = twitter.Api(consumer_key='Vf2Gyh18iHFBURb21bbzpw432',
+                      consumer_secret='FmIwnAp6yVrpimTDvWs3mrTzO4n6YpkKMyiXuOsVMm9bjptxVT',
+                      access_token_key='2600508180-4UoJ9ssATc73oOCuV1fMkNOlQR3Y9Io0qZzbjqA',
+                      access_token_secret='yDoyTgmTu1KbLukEAEgehwKe67s7wHmpDsEYezpTUqASu')
+
+
 
 #Load feature vector data into dataframe
-path = 'featurevectors.csv'
+path = 'features.csv'
 feature_vectors = pd.read_csv(path)
+
 
 dataByArtist = {}
 previous_artist = ""
+previous = 0
 #Create dictionary of data for each individual artist
 for index, row in feature_vectors.iterrows():
+    trend = -(row['Position'] - previous)
     artist = row['ArtistName']
     try:
-        dataByArtist[artist].append([row['ChartDate'],row['LastPosition'],row['WeeksOnChart'],row['DailyMentions'],row['DailyMentionsDiff'],row['DailyFollowers'],row['DailyFollowersDiff'],row['Position']])
+        if row['Position'] == 101:
+            weeksonchart = 0
+        else:
+            weeksonchart = row['WeeksOnChart']
+        if row['DailyMentionsMult'] > 1:
+            row['DailyMentionsMult'] = 1
+        if row['DailyFollowersMult'] > 1:
+            row['DailtFollowersMult'] = 1
+        dataByArtist[artist].append([row['ChartDate'],row['LastPosition'],weeksonchart,row['DailyMentionsMult'],row['DailyFollowersMult'],row['Position'], trend])
     except KeyError:
+        if row['Position'] == 101:
+            weeksonchart = 0
+        else:
+            weeksonchart = row['WeeksOnChart']
+        if row['DailyMentionsMult'] > 1:
+            row['DailyMentionsMult'] = 1
+        if row['DailyFollowersMult'] > 1:
+            row['DailtFollowersMult'] = 1
         dataByArtist[artist] = []
-        dataByArtist[artist].append([row['ChartDate'],row['LastPosition'],row['WeeksOnChart'],row['DailyMentions'],row['DailyMentionsDiff'],row['DailyFollowers'],row['DailyFollowersDiff'],row['Position']])
+        dataByArtist[artist].append([row['ChartDate'],row['LastPosition'],weeksonchart,row['DailyMentionsMult'],row['DailyFollowersMult'],row['Position'], trend])
+    previous = row['Position']
 
 #Takes 2 artists and dictionary of features for all artists and return X and Y lists to train and test classifiers on
 def getData(artist1, artist2, dataByArtist):
@@ -32,21 +63,21 @@ def getData(artist1, artist2, dataByArtist):
     while iter < len(artist1_data) - 1: # Leave out most recent week for testing
         # print(artist1_data[iter])
         # Check whether chart position of artist 1 is greater than artist 2
-        position1 = int(artist1_data[iter][7])
-        position2 = int(artist2_data[iter][7])
+        position1 = int(artist1_data[iter][5])
+        position2 = int(artist2_data[iter][5])
         #print(artist1 + ': ' + str(position1) + "  " + artist2 + ": " + str(position2))
         if position1 < position2:
             #print(artist1 + " higher than " + artist2)
-            X_list = [artist1_data[iter][1], artist1_data[iter][2], artist1_data[iter][3], artist1_data[iter][4],
-                      artist1_data[iter][5], artist1_data[iter][6], artist2_data[iter][1], artist2_data[iter][2],
-                      artist2_data[iter][3], artist2_data[iter][4], artist2_data[iter][5], artist2_data[iter][6]]
+            X_list = [artist1_data[iter][1], artist1_data[iter][2], artist1_data[iter][3], artist1_data[iter][4], artist1_data[iter][6],
+                      artist2_data[iter][1], artist2_data[iter][2],
+                      artist2_data[iter][3], artist2_data[iter][4], artist2_data[iter][6]]
             X.append(X_list)
             Y.append(True)
         elif position1 > position2:
             # print(artist2 + " higher than " + artist1)
-            X_list = [artist1_data[iter][1], artist1_data[iter][2], artist1_data[iter][3], artist1_data[iter][4],
-                      artist1_data[iter][5], artist1_data[iter][6], artist2_data[iter][1], artist2_data[iter][2],
-                      artist2_data[iter][3], artist2_data[iter][4], artist2_data[iter][5], artist2_data[iter][6]]
+            X_list = [artist1_data[iter][1], artist1_data[iter][2], artist1_data[iter][3], artist1_data[iter][4], artist1_data[iter][6],
+                      artist2_data[iter][1], artist2_data[iter][2],
+                      artist2_data[iter][3], artist2_data[iter][4], artist2_data[iter][6]]
             X.append(X_list)
             Y.append(False)
         iter += 1
@@ -64,21 +95,21 @@ def getMostRecentData(artist1, artist2, dataByArtist):
     while iter < len(artist1_data):
         # print(artist1_data[iter])
         # Check whether chart position of artist 1 is greater than artist 2
-        position1 = int(artist1_data[iter][7])
-        position2 = int(artist2_data[iter][7])
+        position1 = int(artist1_data[iter][5])
+        position2 = int(artist2_data[iter][5])
         # print(artist1 + ': ' + str(position1) + "  " + artist2 + ": " + str(position2))
         if position1 < position2:
             # print(artist1 + " higher than " + artist2)
-            X_list = [artist1_data[iter][1], artist1_data[iter][2], artist1_data[iter][3], artist1_data[iter][4],
-                      artist1_data[iter][5], artist1_data[iter][6], artist2_data[iter][1], artist2_data[iter][2],
-                      artist2_data[iter][3], artist2_data[iter][4], artist2_data[iter][5], artist2_data[iter][6]]
+            X_list = [artist1_data[iter][1], artist1_data[iter][2], artist1_data[iter][3], artist1_data[iter][4], artist1_data[iter][6],
+                      artist2_data[iter][1], artist2_data[iter][2],
+                      artist2_data[iter][3], artist2_data[iter][4], artist2_data[iter][6]]
             X.append(X_list)
             Y.append(True)
         elif position1 > position2:
             # print(artist2 + " higher than " + artist1)
-            X_list = [artist1_data[iter][1], artist1_data[iter][2], artist1_data[iter][3], artist1_data[iter][4],
-                      artist1_data[iter][5], artist1_data[iter][6], artist2_data[iter][1], artist2_data[iter][2],
-                      artist2_data[iter][3], artist2_data[iter][4], artist2_data[iter][5], artist2_data[iter][6]]
+            X_list = [artist1_data[iter][1], artist1_data[iter][2], artist1_data[iter][3], artist1_data[iter][4], artist1_data[iter][6],
+                      artist2_data[iter][1], artist2_data[iter][2],
+                      artist2_data[iter][3], artist2_data[iter][4], artist2_data[iter][6]]
             X.append(X_list)
             Y.append(False)
         iter += 1
@@ -99,22 +130,17 @@ for entry in combinations:
     artist2 = entry[1]
     individualX, individualY = getData(artist1, artist2, dataByArtist)
     if len(individualX) > 0:
-        #print("X " + artist1 + " and " + artist2)
-        #print(individualX)
-        #print("Y " + artist1 + " and " + artist2)
-        #print(individualY)
         iter = 0
         while iter < len(individualX):
             X.append(individualX[iter])
             Y.append(individualY[iter])
             iter += 1
 
-#print(len(X))
-#print(len(Y))
 
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
 
 classifier = LogisticRegression()
+
 classifier.fit(X_train, y_train)
 
 y_pred = classifier.predict(X_test)
@@ -128,6 +154,7 @@ while iter < len(y_pred):
     total += 1
     iter += 1
 percentage = (correct / total) * 100
+print("Predictions for ")
 print("Correct: " + str(correct))
 print("Total: " + str(total))
 print("Percentage Predicted: " + str(percentage) + "%\n")
@@ -143,10 +170,6 @@ for entry in combinations:
     artist2 = entry[1]
     individualX, individualY, artists = getMostRecentData(artist1, artist2, dataByArtist)
     if len(individualX) > 0:
-        #print("X " + artist1 + " and " + artist2)
-        #print(individualX)
-        #print("Y " + artist1 + " and " + artist2)
-        #print(individualY)
         iter = 0
         while iter < len(individualX):
             X.append(individualX[iter])
@@ -156,6 +179,20 @@ for entry in combinations:
 
 
 y_pred = classifier.predict(X)
+
+iter = 0
+correct = 0
+total = 0
+while iter < len(y_pred):
+    if y_pred[iter] == y_test[iter]:
+        correct += 1
+    total += 1
+    iter += 1
+percentage = (correct / total) * 100
+print("Current Week Predictions")
+print("Correct: " + str(correct))
+print("Total: " + str(total))
+print("Percentage Predicted: " + str(percentage) + "%\n")
 
 #Use classifier prediction of most recent week data to generate artist 100
 iter = 0
@@ -182,18 +219,13 @@ while iter < len(artist_pairs):
             ranking[pos2], ranking[pos1] = ranking[pos1], ranking[pos2]
     iter += 1
 
-f= open("predtop100.txt","w")
 iter = 1
+top100list = []
 ranking = ranking[:100]
-string = ""
 while (iter-1) < 100:
-    string += str(iter) + ": " + ranking[iter-1]
-    string += '\n'
+    top100list.append(ranking[iter-1])
     iter += 1
 
-print(string)
-f.write(string)
-f.close()
 
 # Calculates RMSE based on distances of artist rankings between an actual and predicted chart - pass in arrays of artist names sorted by rank
 def chartRMSE(actualChart, predChart):
@@ -284,9 +316,69 @@ print('Predicted top 10 RMSE (matches only): ' + str(predRMSETop10MatchesOnly))
 print('Predicted top 10 overlap with actual top 10: ' + str(predOverlapTop10)  + '\n')
 
 print('Previous chart baseline RMSE: ' + str(prevRMSE))
-print('Previous chart baseline RMSE (matches only): ' + str(prevRMSETop10MatchesOnly))
+print('Previous chart baseline RMSE (matches only): ' + str(prevRMSEMatchesOnly))
 print('Previous chart baseline overlap with actual chart: ' + str(prevOverlap)  + '\n')
 
 print('Previous top 10 baseline RMSE: ' + str(prevRMSETop10))
 print('Previous top 10 baseline RMSE (matches only): ' + str(prevRMSETop10MatchesOnly))
 print('Previous top 10 baseline overlap with actual top 10: ' + str(prevOverlapTop10)  + '\n')
+
+
+print("Last Weeks List")
+print(prevChart['ArtistName'].values.tolist()[:100])
+print("Actual Top 100")
+print(actualChart['ArtistName'].values.tolist()[:100])
+print("Predicted Top 100")
+print(top100list)
+
+actual_twitter = []
+#Populate list of artists twitter usernames
+for artist in actualChart['ArtistName'].values.tolist():
+    artist_no_space = artist.replace(" ","")
+
+    #Check against pre-existing list
+    #twitter = x.ArtistTwitter(artist_no_space)
+    twitter = None
+    #If not found, use twitter API to find username
+    if twitter == None:
+        user = api.GetUsersSearch(term=artist, page=1, count=1, include_entities=None)
+        try:
+            user = user[0]
+
+            twitter = (user.screen_name)
+            actual_twitter.append(twitter)
+        except IndexError:
+            twitter = None
+            actual_twitter.append(twitter)
+    #Exception cases, manually coded
+
+print('Twitter handles of actual 100 list')
+print(actual_twitter)
+
+pred_twitter = []
+# Populate list of artists twitter usernames
+for artist in top100list:
+    artist_no_space = artist.replace(" ", "")
+
+    # Check against pre-existing list
+    # twitter = x.ArtistTwitter(artist_no_space)
+    twitter = None
+    # If not found, use twitter API to find username
+    if twitter == None:
+        user = api.GetUsersSearch(term=artist, page=1, count=1, include_entities=None)
+        try:
+            user = user[0]
+
+            twitter = (user.screen_name)
+            pred_twitter.append(twitter)
+        except IndexError:
+            twitter = None
+            pred_twitter.append(twitter)
+            # Exception cases, manually coded
+
+print('Twitter handles of predicted 100 list')
+print(pred_twitter)
+
+
+
+
