@@ -8,6 +8,8 @@ Top 10 RMSE: 66.78207958611468
 Top 10 RMSE (matches only): 3.4226138716316967
 Overlap with actual top 10: 0.7
 
+Pairwise classification accuracy: N/A
+
 
 
 Logistic Regression:
