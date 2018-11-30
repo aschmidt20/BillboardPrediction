@@ -140,20 +140,25 @@ for entry in combinations:
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
 
 
+# LOGISTIC REGRESSION
 #classifier = LogisticRegression(solver='liblinear')
-#classifier = DecisionTreeClassifier(max_depth=20)
-classifier = ensemble.AdaBoostClassifier(DecisionTreeClassifier(max_depth=20), n_estimators=50)
+#classifier = "LogisticRegression"
+#print("LogisticRegression coefficients:")
+#print(classifier.coef_)
 
-classifierName = "AdaBoostDecisionTree"
+# DECISION TREE
+#classifier = DecisionTreeClassifier(max_depth=20)
+#classifierName = "DecisionTree"
+#tree.export_graphviz(classifier, out_file='DecisionTree.dot')
+
+# DECISION TREE ENSEMBLE
+#classifier = ensemble.AdaBoostClassifier(DecisionTreeClassifier(max_depth=20), n_estimators=50)
+#classifierName = "AdaBoostDecisionTree"
 
 classifier.fit(X_train, y_train)
 
 y_pred = classifier.predict(X_test)
 
-# Export logistic regression coefficients, or decision tree
-#tree.export_graphviz(classifier, out_file='DecisionTree.dot')
-#print("LogisticRegression coefficients:")
-#print(classifier.coef_)
 
 iter = 0
 correct = 0
