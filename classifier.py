@@ -141,10 +141,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
 
 
 # LOGISTIC REGRESSION
-#classifier = LogisticRegression(solver='liblinear')
-#classifier = "LogisticRegression"
-#print("LogisticRegression coefficients:")
-#print(classifier.coef_)
+classifier = LogisticRegression(solver='liblinear')
+classifierName = "LogisticRegression"
+print("LogisticRegression coefficients:")
+print(classifier.coef_)
 
 # DECISION TREE
 #classifier = DecisionTreeClassifier(max_depth=20)
@@ -158,21 +158,6 @@ X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
 classifier.fit(X_train, y_train)
 
 y_pred = classifier.predict(X_test)
-
-
-iter = 0
-correct = 0
-total = 0
-while iter < len(y_pred):
-    if y_pred[iter] == y_test[iter]:
-        correct += 1
-    total += 1
-    iter += 1
-percentage = (correct / total) * 100
-#print("Predictions for ")
-#print("Correct: " + str(correct))
-#print("Total: " + str(total))
-#print("Percentage Predicted: " + str(percentage) + "%\n")
 
 
 X = []
