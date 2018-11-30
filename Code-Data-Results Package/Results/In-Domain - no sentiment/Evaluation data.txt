@@ -1,57 +1,68 @@
+Previous Chart Baseline:
+
+Chart RMSE: 44.52565438379412
+Chart RMSE (matches only): 11.197778525334344
+Overlap with actual chart: 0.82
+
+Top 10 RMSE: 73.66769014587447
+Top 10 RMSE (matches only): 2.7386127875258306
+Overlap with actual top 10: 0.6
+
+Pairwise classification accuracy: N/A
+
+
+
 Logistic Regression:
 
-Predicted chart RMSE: 5.338539126015656
-Predicted chart RMSE (matches only): 5.338539126015656
-Predicted chart overlap with actual chart: 1.0
+Chart RMSE: 35.212970210251186
+Chart RMSE (matches only): 18.100377231261742
+Overlap with actual chart: 0.93
 
-Predicted top 10 RMSE: 56.93051320103599
-Predicted top 10 RMSE (matches only): 1.5
-Predicted top 10 overlap with actual top 10: 0.8
+Top 10 RMSE: 74.06753674856482
+Top 10 RMSE (matches only): 2.160246899469287
+Overlap with actual top 10: 0.6
 
-Previous chart baseline RMSE: 44.52565438379412
-Previous chart baseline RMSE (matches only): 11.197778525334344
-Previous chart baseline overlap with actual chart: 0.82
+Pairwise classification accuracy: 90.96418199419168%
 
-Previous top 10 baseline RMSE: 73.66769014587447
-Previous top 10 baseline RMSE (matches only): 2.7386127875258306
-Previous top 10 baseline overlap with actual top 10: 0.6
+Model coefficients:
+- Artist 1 LastPosition: -0.0726758
+- Artist 1 WeeksOnChart: 0.0077822 
+- Artist 1 DailyMentionsMult: 0.62381223 
+- Artist 1 DailyFollowersMult: 0.14941982
+- Artist 1 PositionTrend: -0.01251375
+
+- Artist 2 LastPosition: 0.07254483
+- Artist 2 WeeksOnChart: -0.01442572
+- Artist 2 DailyMentionsMult: -1.31106736 
+- Artist 2 DailyFollowersMult: 0.04300571
+- Artist 2 PositionTrend: 0.01595697
 
 
 
-Decision Tree (maxdepth=20):
+Decision Tree (maxdepth=7):
 
-Predicted chart RMSE: 7.500666637039671
-Predicted chart RMSE (matches only): 7.500666637039671
-Predicted chart overlap with actual chart: 1.0
+Chart RMSE: 12.34422942106f9587
+Chart RMSE (matches only): 12.344229421069587
+Overlap with actual chart: 1.0
 
-Predicted top 10 RMSE: 57.080352720236995
-Predicted top 10 RMSE (matches only): 2.1505813167606567
-Predicted top 10 overlap with actual top 10: 0.8
+Top 10 RMSE: 80.29362780860426
+Top 10 RMSE (matches only): 2.4083189157584592
+Overlap with actual top 10: 0.5
 
-Previous chart baseline RMSE: 44.52565438379412
-Previous chart baseline RMSE (matches only): 11.197778525334344
-Previous chart baseline overlap with actual chart: 0.82
+Pairwise classification accuracy: 91.74636979670862%
 
-Previous top 10 baseline RMSE: 73.66769014587447
-Previous top 10 baseline RMSE (matches only): 2.7386127875258306
-Previous top 10 baseline overlap with actual top 10: 0.6
+See DecisionTree.dot, DecisionTree.png for produced tree.
 
 
 
 AdaBoost Decision Tree (maxdepth=20, count=50)
 
-Predicted chart RMSE: 4.458699361921591
-Predicted chart RMSE (matches only): 4.458699361921591
-Predicted chart overlap with actual chart: 1.0
+Chart RMSE: 21.09217864517556
+Chart RMSE (matches only): 21.09217864517556
+Overlap with actual chart: 1.0
 
-Predicted top 10 RMSE: 56.06023546151051
-Predicted top 10 RMSE (matches only): 1.3228756555322954
-Predicted top 10 overlap with actual top 10: 0.8
+Top 10 RMSE: 66.08444481232966
+Top 10 RMSE (matches only): 1.0
+Overlap with actual top 10: 0.7
 
-Previous chart baseline RMSE: 44.52565438379412
-Previous chart baseline RMSE (matches only): 11.197778525334344
-Previous chart baseline overlap with actual chart: 0.82
-
-Previous top 10 baseline RMSE: 73.66769014587447
-Previous top 10 baseline RMSE (matches only): 2.7386127875258306
-Previous top 10 baseline overlap with actual top 10: 0.6
+Pairwise classification accuracy: 91.58373668925461%
