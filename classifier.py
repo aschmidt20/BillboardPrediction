@@ -16,12 +16,12 @@ from os import listdir
 from os.path import isfile, join
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
-
+####################################################################################################################
+# 1) DATA LOADING
 #Load feature vector data into dataframe
 path = 'Feature Vectors - in.csv' # In-domain experiment
 #path = 'Feature Vectors - out.csv' # Out-of-domain experimenty
 feature_vectors = pd.read_csv(path)
-
 
 dataByArtist = {}
 previous_artist = ""
@@ -116,7 +116,8 @@ def getMostRecentData(artist1, artist2, dataByArtist):
 
     return X, Y, artist_pair
 
-
+####################################################################################################################
+# 2) TRAIN/TEST CLASSIFIER
 artistList = [artist for artist in dataByArtist]
 
 # Generate all possible combinations of artist comparisons
@@ -124,7 +125,7 @@ combinations = list(combinations(artistList, 2))
 
 X = []
 Y = []
-#Generate training and test sets of X and Y for classifier training
+# Generate training set (includes all chart weeks from the feature vectors except the last one)
 for entry in combinations:
     artist1 = entry[0]
     artist2 = entry[1]
@@ -136,10 +137,24 @@ for entry in combinations:
             Y.append(individualY[iter])
             iter += 1
 
+X_test = []
+Y_test = []
+artist_pairs = []
+ranking = []
+# Generate test set (includes only last week of feature vectors)
+for entry in combinations:
+    artist1 = entry[0]
+    artist2 = entry[1]
+    individualX, individualY, artists = getMostRecentData(artist1, artist2, dataByArtist)
+    if len(individualX) > 0:
+        iter = 0
+        while iter < len(individualX):
+            X_test.append(individualX[iter])
+            Y_test.append(individualY[iter])
+            artist_pairs.append(artists)
+            iter += 1
 
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
-
-
+# Create, train, and test classifier
 # LOGISTIC REGRESSION
 classifier = LogisticRegression(solver='liblinear')
 classifierName = "LogisticRegression"
@@ -152,49 +167,16 @@ classifierName = "LogisticRegression"
 #classifier = ensemble.AdaBoostClassifier(DecisionTreeClassifier(max_depth=20), n_estimators=50)
 #classifierName = "AdaBoostDecisionTree"
 
-classifier.fit(X_train, y_train)
+classifier.fit(X, Y)
 y_pred = classifier.predict(X_test)
 
-# Export decision tree or logistic regression coefficients
+# Export logistic regression coefficients/decision tree
 print("LogisticRegression coefficients:")
 print(classifier.coef_)
 #tree.export_graphviz(classifier, out_file='DecisionTree.dot')
 
-X = []
-Y = []
-artist_pairs = []
-ranking = []
-#Create X list of current week data, and apply classifier to generate predicted top 100 ranking
-for entry in combinations:
-    artist1 = entry[0]
-    artist2 = entry[1]
-    individualX, individualY, artists = getMostRecentData(artist1, artist2, dataByArtist)
-    if len(individualX) > 0:
-        iter = 0
-        while iter < len(individualX):
-            X.append(individualX[iter])
-            Y.append(individualY[iter])
-            artist_pairs.append(artists)
-            iter += 1
 
-
-y_pred = classifier.predict(X)
-
-iter = 0
-correct = 0
-total = 0
-while iter < len(y_pred):
-    if y_pred[iter] == y_test[iter]:
-        correct += 1
-    total += 1
-    iter += 1
-percentage = (correct / total) * 100
-print("Current Week Predictions")
-print("Correct: " + str(correct))
-print("Total: " + str(total))
-print("Percentage Predicted: " + str(percentage) + "%\n")
-
-#Use classifier prediction of most recent week data to generate artist 100
+# Use classifier predictions for testing feature vectors to generate Artist 100
 iter = 0
 while iter < len(artist_pairs):
     pair = artist_pairs[iter]
@@ -227,6 +209,8 @@ while (iter-1) < 100:
     iter += 1
 
 
+####################################################################################################################
+# 3) EVALUATION
 # Calculates RMSE based on distances of artist rankings between an actual and predicted chart - pass in arrays of artist names sorted by rank
 def chartRMSE(actualChart, predChart):
     actualRanks = []
@@ -279,6 +263,21 @@ def chartOverlap(actualChart, predChart):
     overlap = list(set(actualChart).intersection(set(predChart)))
     prop = float(len(overlap))/len(actualChart)
     return prop
+
+# Score accuracy of each pairwise prediction
+iter = 0
+correct = 0
+total = 0
+while iter < len(y_pred):
+    if y_pred[iter] == y_test[iter]:
+        correct += 1
+    total += 1
+    iter += 1
+percentage = (correct / total) * 100
+print("Current Week Predictions")
+print("Correct: " + str(correct))
+print("Total: " + str(total))
+print("Percentage Predicted: " + str(percentage) + "%\n")    
 
 # Evaluation, comparison of charts
 feature_vectors['ChartDate'] = pd.to_datetime(feature_vectors['ChartDate'])    
