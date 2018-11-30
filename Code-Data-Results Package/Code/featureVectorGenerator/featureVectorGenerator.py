@@ -38,12 +38,10 @@ for artist in allArtists[0].unique():
     allFollowers['Followers'] = pd.to_numeric(allFollowers['Followers'])
         
     lastPosition = 0
-    prevPosition = 0
     # For each chart   
     for chartDate in charts['ChartDate'].unique():
         # Get chart for the date
         chart = charts.loc[charts['ChartDate'] == chartDate]
-        prevChart = charts.loc[charts['ChartDate'] == chartDate + np.timedelta64(-14,'D')]
         
         # Get chart date and tracking period of chart
         trackingStart = chartDate + np.timedelta64(-15,'D')
@@ -106,7 +104,6 @@ for artist in allArtists[0].unique():
                 
         # Get features from chart data
         artistEntry = chart.loc[chart['Artist'] == artist]
-        prevArtistEntry = prevChart.loc[chart['Artist'] == artist]
         
         # If artist charted, get latest chart info
         if len(artistEntry) == 1:
@@ -115,6 +112,7 @@ for artist in allArtists[0].unique():
             if lastPosition == 0: 
                 # Only trust the chart's last position if we're on the first chart; it can often be wrong for the #1 spot
                 lastPosition = int(artistEntry['LastPosition'].iloc[0])
+            positionChange = lastPosition - position
             weeksOnChart = int(artistEntry['WeeksOnChart'].iloc[0]) - 1 # Weeks on chart BEFORE this chart (that way we aren't "cheating" if using vectors for test data)
         
         # If artist didn't chart, see if they've charted before in our data
@@ -123,6 +121,7 @@ for artist in allArtists[0].unique():
             if lastPosition == 0: 
                 # If this is our first chart, assume they didn't chart previous week either
                 lastPosition = 101
+            positionChange = lastPosition - 101
 
             pastCharts = charts.loc[(charts['Artist'] == artist) & (charts['ChartDate'] < chartDate)].sort_values('ChartDate', ascending=False)
             futureCharts = charts.loc[(charts['Artist'] == artist) & (charts['ChartDate'] > chartDate)].sort_values('ChartDate')
@@ -138,24 +137,16 @@ for artist in allArtists[0].unique():
                 # If not, zero for weeks on chart (this case shouldn't happen for anyone important because all of our artists charted in the past year)
                 else:
                     weeksOnChart = 0
-            
-        # If this is the first chart, we will not have previous position; assume it's 101 (off chart)
-        if (prevPosition == 0):
-            prevPosition = 101
-            
-        positionTrend = prevPosition - lastPosition
         
-        # Add feature vector and set last positions to whatever chart position got chosen here
-        featureVectors.append([chartDate, artist, position, lastPosition, positionTrend, weeksOnChart, overallAvgMentions, weekAvgMentions, avgMentionsChange, avgMentionsRate, overallAvgFollowers, overallMaxFollowers, overallAvgFollowersGained, weekAvgFollowersGained, avgFollowersGainedChange, avgFollowersGainedRate])
-        
-        prevPosition = lastPosition
+        # Add feature vector and set last position to whatever chart position got chosen here
+        featureVectors.append([chartDate, artist, position, lastPosition, positionChange, weeksOnChart, overallAvgMentions, weekAvgMentions, avgMentionsChange, avgMentionsRate, overallAvgFollowers, overallMaxFollowers, overallAvgFollowersGained, weekAvgFollowersGained, avgFollowersGainedChange, avgFollowersGainedRate])
         lastPosition = position
         
     print("Feature vectors for " + artist + " generated.")
         
 with open('output/feature vectors.csv', 'w+', newline='') as outputFile:
     outputWriter = csv.writer(outputFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    outputWriter.writerow(["ChartDate","ArtistName","Position","LastPosition","PositionTrend","WeeksOnChart","DailyMentions", "TrackingWeekDailyMentions", "DailyMentionsDiff", "DailyMentionsMult", "AvgFollowers", "MaxFollowers", "DailyFollowers", "TrackingWeekDailyFollowers", "DailyFollowersDiff", "DailyFollowersMult"])
+    outputWriter.writerow(["ChartDate","ArtistName","Position","LastPosition","PositionChange","WeeksOnChart","DailyMentions", "TrackingWeekDailyMentions", "DailyMentionsDiff", "DailyMentionsMult", "AvgFollowers", "MaxFollowers", "DailyFollowers", "TrackingWeekDailyFollowers", "DailyFollowersDiff", "DailyFollowersMult"])
     outputWriter.writerows(featureVectors)
     
 # TODO: Add sentiment score feature when we have it

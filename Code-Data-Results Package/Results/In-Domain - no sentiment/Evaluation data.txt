@@ -1,0 +1,57 @@
+Logistic Regression:
+
+Predicted chart RMSE: 5.338539126015656
+Predicted chart RMSE (matches only): 5.338539126015656
+Predicted chart overlap with actual chart: 1.0
+
+Predicted top 10 RMSE: 56.93051320103599
+Predicted top 10 RMSE (matches only): 1.5
+Predicted top 10 overlap with actual top 10: 0.8
+
+Previous chart baseline RMSE: 44.52565438379412
+Previous chart baseline RMSE (matches only): 11.197778525334344
+Previous chart baseline overlap with actual chart: 0.82
+
+Previous top 10 baseline RMSE: 73.66769014587447
+Previous top 10 baseline RMSE (matches only): 2.7386127875258306
+Previous top 10 baseline overlap with actual top 10: 0.6
+
+
+
+Decision Tree (maxdepth=20):
+
+Predicted chart RMSE: 7.500666637039671
+Predicted chart RMSE (matches only): 7.500666637039671
+Predicted chart overlap with actual chart: 1.0
+
+Predicted top 10 RMSE: 57.080352720236995
+Predicted top 10 RMSE (matches only): 2.1505813167606567
+Predicted top 10 overlap with actual top 10: 0.8
+
+Previous chart baseline RMSE: 44.52565438379412
+Previous chart baseline RMSE (matches only): 11.197778525334344
+Previous chart baseline overlap with actual chart: 0.82
+
+Previous top 10 baseline RMSE: 73.66769014587447
+Previous top 10 baseline RMSE (matches only): 2.7386127875258306
+Previous top 10 baseline overlap with actual top 10: 0.6
+
+
+
+AdaBoost Decision Tree (maxdepth=20, count=50)
+
+Predicted chart RMSE: 4.458699361921591
+Predicted chart RMSE (matches only): 4.458699361921591
+Predicted chart overlap with actual chart: 1.0
+
+Predicted top 10 RMSE: 56.06023546151051
+Predicted top 10 RMSE (matches only): 1.3228756555322954
+Predicted top 10 overlap with actual top 10: 0.8
+
+Previous chart baseline RMSE: 44.52565438379412
+Previous chart baseline RMSE (matches only): 11.197778525334344
+Previous chart baseline overlap with actual chart: 0.82
+
+Previous top 10 baseline RMSE: 73.66769014587447
+Previous top 10 baseline RMSE (matches only): 2.7386127875258306
+Previous top 10 baseline overlap with actual top 10: 0.6

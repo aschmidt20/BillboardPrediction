@@ -1,6 +1,11 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn import tree
+from sklearn.svm import SVC
+from sklearn import ensemble
 from sklearn.model_selection import train_test_split
 from itertools import combinations
 from sklearn.metrics import mean_squared_error
@@ -10,25 +15,20 @@ import csv
 from os import listdir
 from os.path import isfile, join
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-import twitter
-api = twitter.Api(consumer_key='Vf2Gyh18iHFBURb21bbzpw432',
-                      consumer_secret='FmIwnAp6yVrpimTDvWs3mrTzO4n6YpkKMyiXuOsVMm9bjptxVT',
-                      access_token_key='2600508180-4UoJ9ssATc73oOCuV1fMkNOlQR3Y9Io0qZzbjqA',
-                      access_token_secret='yDoyTgmTu1KbLukEAEgehwKe67s7wHmpDsEYezpTUqASu')
-
 
 
 #Load feature vector data into dataframe
-path = 'features.csv'
+path = 'Feature Vectors - in.csv' # In-domain experiment
+#path = 'Feature Vectors - out.csv' # Out-of-domain experimenty
 feature_vectors = pd.read_csv(path)
 
 
 dataByArtist = {}
 previous_artist = ""
-previous = 0
+
 #Create dictionary of data for each individual artist
 for index, row in feature_vectors.iterrows():
-    trend = -(row['Position'] - previous)
+    #trend = -(row['LastPosition'] - previous)
     artist = row['ArtistName']
     try:
         if row['Position'] == 101:
@@ -39,7 +39,7 @@ for index, row in feature_vectors.iterrows():
             row['DailyMentionsMult'] = 1
         if row['DailyFollowersMult'] > 1:
             row['DailtFollowersMult'] = 1
-        dataByArtist[artist].append([row['ChartDate'],row['LastPosition'],weeksonchart,row['DailyMentionsMult'],row['DailyFollowersMult'],row['Position'], trend])
+        dataByArtist[artist].append([row['ChartDate'],row['LastPosition'],weeksonchart,row['DailyMentionsMult'],row['DailyFollowersMult'],row['Position'], row['PositionTrend']])
     except KeyError:
         if row['Position'] == 101:
             weeksonchart = 0
@@ -50,8 +50,8 @@ for index, row in feature_vectors.iterrows():
         if row['DailyFollowersMult'] > 1:
             row['DailtFollowersMult'] = 1
         dataByArtist[artist] = []
-        dataByArtist[artist].append([row['ChartDate'],row['LastPosition'],weeksonchart,row['DailyMentionsMult'],row['DailyFollowersMult'],row['Position'], trend])
-    previous = row['Position']
+        dataByArtist[artist].append([row['ChartDate'],row['LastPosition'],weeksonchart,row['DailyMentionsMult'],row['DailyFollowersMult'],row['Position'], row['PositionTrend']])
+    #previous = row['Position']
 
 #Takes 2 artists and dictionary of features for all artists and return X and Y lists to train and test classifiers on
 def getData(artist1, artist2, dataByArtist):
@@ -139,11 +139,21 @@ for entry in combinations:
 
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
 
-classifier = LogisticRegression()
+
+#classifier = LogisticRegression(solver='liblinear')
+#classifier = DecisionTreeClassifier(max_depth=20)
+classifier = ensemble.AdaBoostClassifier(DecisionTreeClassifier(max_depth=20), n_estimators=50)
+
+classifierName = "AdaBoostDecisionTree"
 
 classifier.fit(X_train, y_train)
 
 y_pred = classifier.predict(X_test)
+
+# Export logistic regression coefficients, or decision tree
+#tree.export_graphviz(classifier, out_file='DecisionTree.dot')
+#print("LogisticRegression coefficients:")
+#print(classifier.coef_)
 
 iter = 0
 correct = 0
@@ -154,10 +164,10 @@ while iter < len(y_pred):
     total += 1
     iter += 1
 percentage = (correct / total) * 100
-print("Predictions for ")
-print("Correct: " + str(correct))
-print("Total: " + str(total))
-print("Percentage Predicted: " + str(percentage) + "%\n")
+#print("Predictions for ")
+#print("Correct: " + str(correct))
+#print("Total: " + str(total))
+#print("Percentage Predicted: " + str(percentage) + "%\n")
 
 
 X = []
@@ -323,61 +333,10 @@ print('Previous top 10 baseline RMSE: ' + str(prevRMSETop10))
 print('Previous top 10 baseline RMSE (matches only): ' + str(prevRMSETop10MatchesOnly))
 print('Previous top 10 baseline overlap with actual top 10: ' + str(prevOverlapTop10)  + '\n')
 
-
-print("Last Weeks List")
-print(prevChart['ArtistName'].values.tolist()[:100])
-print("Actual Top 100")
-print(actualChart['ArtistName'].values.tolist()[:100])
-print("Predicted Top 100")
-print(top100list)
-
-actual_twitter = []
-#Populate list of artists twitter usernames
-for artist in actualChart['ArtistName'].values.tolist():
-    artist_no_space = artist.replace(" ","")
-
-    #Check against pre-existing list
-    #twitter = x.ArtistTwitter(artist_no_space)
-    twitter = None
-    #If not found, use twitter API to find username
-    if twitter == None:
-        user = api.GetUsersSearch(term=artist, page=1, count=1, include_entities=None)
-        try:
-            user = user[0]
-
-            twitter = (user.screen_name)
-            actual_twitter.append(twitter)
-        except IndexError:
-            twitter = None
-            actual_twitter.append(twitter)
-    #Exception cases, manually coded
-
-print('Twitter handles of actual 100 list')
-print(actual_twitter)
-
-pred_twitter = []
-# Populate list of artists twitter usernames
-for artist in top100list:
-    artist_no_space = artist.replace(" ", "")
-
-    # Check against pre-existing list
-    # twitter = x.ArtistTwitter(artist_no_space)
-    twitter = None
-    # If not found, use twitter API to find username
-    if twitter == None:
-        user = api.GetUsersSearch(term=artist, page=1, count=1, include_entities=None)
-        try:
-            user = user[0]
-
-            twitter = (user.screen_name)
-            pred_twitter.append(twitter)
-        except IndexError:
-            twitter = None
-            pred_twitter.append(twitter)
-            # Exception cases, manually coded
-
-print('Twitter handles of predicted 100 list')
-print(pred_twitter)
+with open(classifierName + ' predicted chart.csv', 'w+', newline='') as outputFile:
+    outputWriter = csv.writer(outputFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    for entry in top100list:
+        outputWriter.writerow([entry])
 
 
 

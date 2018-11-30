@@ -1,0 +1,57 @@
+Logistic Regression:
+
+Predicted chart RMSE: 34.387694216296524
+Predicted chart RMSE (matches only): 14.561377265395212
+Predicted chart overlap with actual chart: 0.89
+
+Predicted top 10 RMSE: 74.06078584514209
+Predicted top 10 RMSE (matches only): 2.309401076758503
+Predicted top 10 overlap with actual top 10: 0.6
+
+Previous chart baseline RMSE: 39.264875331300985
+Previous chart baseline RMSE (matches only): 14.069993101716609
+Previous chart baseline overlap with actual chart: 0.85
+
+Previous top 10 baseline RMSE: 66.78207958611468
+Previous top 10 baseline RMSE (matches only): 3.4226138716316967
+Previous top 10 baseline overlap with actual top 10: 0.7
+
+
+
+Decision Tree (maxdepth=20):
+
+Predicted chart RMSE: 36.35524313910861
+Predicted chart RMSE (matches only): 23.364316903085914
+Predicted chart overlap with actual chart: 0.92
+
+Predicted top 10 RMSE: 79.94373021069256
+Predicted top 10 RMSE (matches only): 3.40587727318528
+Predicted top 10 overlap with actual top 10: 0.5
+
+Previous chart baseline RMSE: 39.264875331300985
+Previous chart baseline RMSE (matches only): 14.069993101716609
+Previous chart baseline overlap with actual chart: 0.85
+
+Previous top 10 baseline RMSE: 66.78207958611468
+Previous top 10 baseline RMSE (matches only): 3.4226138716316967
+Previous top 10 baseline overlap with actual top 10: 0.7
+
+
+
+AdaBoost Decision Tree (maxdepth=20, count=50)
+
+Predicted chart RMSE: 30.961990566064777
+Predicted chart RMSE (matches only): 15.877555674396119
+Predicted chart overlap with actual chart: 0.93
+
+Predicted top 10 RMSE: 66.79071791798619
+Predicted top 10 RMSE (matches only): 2.8030595529069404
+Predicted top 10 overlap with actual top 10: 0.7
+
+Previous chart baseline RMSE: 39.264875331300985
+Previous chart baseline RMSE (matches only): 14.069993101716609
+Previous chart baseline overlap with actual chart: 0.85
+
+Previous top 10 baseline RMSE: 66.78207958611468
+Previous top 10 baseline RMSE (matches only): 3.4226138716316967
+Previous top 10 baseline overlap with actual top 10: 0.7

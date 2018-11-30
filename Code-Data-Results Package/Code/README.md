@@ -1,0 +1,8 @@
+This directory contains 5 subdirectories, each pertaining to a Python script we wrote for the project:
+- getArtist100Pool: Contains a script which collects and writes to a .csv file all artists which appear on the Artist 100 for a specified date range. To generate the Artists.csv file (in Data directory) which defines our domain of artists, we specified the date range 2018-08-25 - 2018-11-10.
+- getArtist100: Contains a script which collects and writes to several .csv files all Artist 100 chart data for a specified date range. Our collected chart data includes charts in the date range 2018-08-25 - 2018-11-17.
+- getNbsData: Contains a script which collects and writes to two .csv files Twitter mention and follower statistics from Next Big Sound (NBS) for a specified .csv file containing a list of artists and a specified date range. Limited by the time range that NBS keeps their data, we collected data for the date range 2018-08-14 - 2018-11-09 on artists listed in Artists.csv.
+- featureVectorGenerator: Given output files from the previous three scripts, generates and writes to a .csv file feature vectors per artist (in Artists.csv) per chart. Performs all necessary preprocessing on chart and NBS data to make it usable by our classifier.
+
+Note: getArtist100Pool.py and getArtist100.py use an API for Billboard charts created by Allen Guo (@guoguo12 on Github).
+	  getNbsData.py uses a Python API wrapper for the NBS API created by Buck Heroux (@buckhx on Github).
