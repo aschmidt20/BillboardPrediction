@@ -143,22 +143,22 @@ X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
 # LOGISTIC REGRESSION
 classifier = LogisticRegression(solver='liblinear')
 classifierName = "LogisticRegression"
-print("LogisticRegression coefficients:")
-print(classifier.coef_)
 
 # DECISION TREE
 #classifier = DecisionTreeClassifier(max_depth=20)
 #classifierName = "DecisionTree"
-#tree.export_graphviz(classifier, out_file='DecisionTree.dot')
 
-# DECISION TREE ENSEMBLE
+# DECISION TREE ENSEMBLE WITH ADABOOST
 #classifier = ensemble.AdaBoostClassifier(DecisionTreeClassifier(max_depth=20), n_estimators=50)
 #classifierName = "AdaBoostDecisionTree"
 
 classifier.fit(X_train, y_train)
-
 y_pred = classifier.predict(X_test)
 
+# Export decision tree or logistic regression coefficients
+print("LogisticRegression coefficients:")
+print(classifier.coef_)
+#tree.export_graphviz(classifier, out_file='DecisionTree.dot')
 
 X = []
 Y = []
