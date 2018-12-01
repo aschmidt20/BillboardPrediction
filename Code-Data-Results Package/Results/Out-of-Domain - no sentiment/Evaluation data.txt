@@ -14,55 +14,87 @@ Pairwise classification accuracy: N/A
 
 Logistic Regression:
 
-Chart RMSE: 38.1295115248387
-Chart RMSE (matches only): 13.14189112439992
-Overlap with actual chart: 0.86
+Chart RMSE: 52.747345362094684
+Chart RMSE (matches only): 17.233687939614086
+Overlap with actual chart: 0.69
 
-Top 10 RMSE: 74.00916931608639
-Top 10 RMSE (matches only): 3.763863263545405
+Top 10 RMSE: 73.98165795848126
+Top 10 RMSE (matches only): 3.9157800414902435
 Overlap with actual top 10: 0.6
 
-Pairwise classification accuracy: 95.89291146942502%
+Pairwise classification accuracy: 98.14908295473667%
 
 Model coefficients:
-- Artist 1 LastPosition: -0.07067445
-- Artist 1 WeeksOnChart: 0.00802663
-- Artist 1 DailyMentionsMult: 0.59443378
-- Artist 1 DailyFollowersMult: 0.14422827
-- Artist 1 PositionTrend: -0.01342087
+[ Artist 1 LastPosition		Artist 1 WeeksOnChart	Artist 1 DailyMentionsMult		Artist 1 DailyFollowersMult		Artist 1 PositionTrend
+  Artist 2 LastPosition		Artist 2 WeeksOnChart	Artist 2 DailyMentionsMult		Artist 2 DailyFollowersMult		Artist 2 PositionTrend ]
 
-- Artist 2 LastPosition: 0.07182456
-- Artist 2 WeeksOnChart: -0.01363038
-- Artist 2 DailyMentionsMult: -1.31870656
-- Artist 2 DailyFollowersMult: -0.0056303 
-- Artist 2 PositionTrend: 0.01571498
+Class -1:
+[-0.10483633  	 0.04158679  	 1.80235583  	 0.02173788 	-0.0342681   
+  0.10027765  	-0.0043232  	-0.11648642 	-0.02161274  	 0.02296931 ]
+  
+Class 0:
+[ 0.01475958 	-2.76556218 	-0.41872486 	-0.07046315 	-0.0101122   
+  0.03154757  	-2.40049789 	-0.09237587 	-0.1110878  	-0.00550512 ]
+
+Class 1:
+[ 0.08676584 	-0.00747512 	-0.18671456 	-0.01959948  	 0.0201236  
+ -0.1029276   	 0.04040451  	 1.02158147  	 0.01069935 	-0.03503029]
 
 
 
 Decision Tree (maxdepth=7):
 
-Chart RMSE: 26.12460981709082
-Chart RMSE (matches only): 15.081183815044424
+DecisionTree Results
+Chart RMSE: 28.541531977436804
+Chart RMSE (matches only): 19.325467244300363
 Overlap with actual chart: 0.95
 
-Top 10 RMSE: 66.78265550966866
-Top 10 RMSE (matches only): 3.525417908358019
-Overlap with actual top 10: 0.7
+Top 10 RMSE: 79.70152654330614
+Top 10 RMSE (matches only): 4.857983120596447
+Overlap with actual top 10: 0.5
 
-Pairwise classification accuracy: 98.73238008315587%
+Pairwise classification accuracy: 99.51078455200953%
 
 See DecisionTree.dot, DecisionTree.png for produced tree.
 
 
 
+Bagging Decision Tree (maxdepth=4, count=50)
+
+Chart RMSE: 27.69235754981267
+Chart RMSE (matches only): 17.907951776853356
+Overlap with actual chart: 0.95
+
+Top 10 RMSE: 88.35423356147284
+Top 10 RMSE (matches only): 5.597618541248888
+Overlap with actual top 10: 0.3
+
+Pairwise classification accuracy: 99.46404422258368%
+
+
+
 AdaBoost Decision Tree (maxdepth=20, count=50)
 
-Chart RMSE: 37.60331114421985
-Chart RMSE (matches only): 16.130437416138317
-Overlap with actual chart: 0.89
+Chart RMSE: 33.63377423410535
+Chart RMSE (matches only): 28.4308371315373
+Overlap with actual chart: 0.96
 
-Top 10 RMSE: 66.79647618526916
-Top 10 RMSE (matches only): 3.401680257083045
-Overlap with actual top 10: 0.7
+Top 10 RMSE: 95.12097560475291
+Top 10 RMSE (matches only): 9.0
+Overlap with actual top 10: 0.1
 
-Pairwise classification accuracy: 98.29226244802757%
+Pairwise classification accuracy: 99.11131053651665%
+
+
+
+Naive Bayes:
+
+Chart RMSE: 58.90984268538995
+Chart RMSE (matches only): 23.16908396145396
+Overlap with actual chart: 0.62
+
+Top 10 RMSE: 92.04588227859216
+Top 10 RMSE (matches only): 5.0
+Overlap with actual top 10: 0.2
+
+Pairwise classification accuracy: 96.10123332149246%
