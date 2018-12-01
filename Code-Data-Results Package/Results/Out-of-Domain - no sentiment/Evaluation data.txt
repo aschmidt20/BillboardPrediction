@@ -22,7 +22,7 @@ Top 10 RMSE: 74.00916931608639
 Top 10 RMSE (matches only): 3.763863263545405
 Overlap with actual top 10: 0.6
 
-Pairwise classification accuracy: 91.77973836324917%
+Pairwise classification accuracy: 95.89291146942502%
 
 Model coefficients:
 - Artist 1 LastPosition: -0.07067445
@@ -49,7 +49,7 @@ Top 10 RMSE: 66.78265550966866
 Top 10 RMSE (matches only): 3.525417908358019
 Overlap with actual top 10: 0.7
 
-Pairwise classification accuracy: 89.69070074029003%
+Pairwise classification accuracy: 98.73238008315587%
 
 See DecisionTree.dot, DecisionTree.png for produced tree.
 
@@ -57,12 +57,12 @@ See DecisionTree.dot, DecisionTree.png for produced tree.
 
 AdaBoost Decision Tree (maxdepth=20, count=50)
 
-Chart RMSE: 34.54952568083449
-Chart RMSE (matches only): 16.17520827183881
-Overlap with actual chart: 0.91
+Chart RMSE: 37.60331114421985
+Chart RMSE (matches only): 16.130437416138317
+Overlap with actual chart: 0.89
 
-Top 10 RMSE: 66.80568838055633
-Top 10 RMSE (matches only): 3.484660262185848
+Top 10 RMSE: 66.79647618526916
+Top 10 RMSE (matches only): 3.401680257083045
 Overlap with actual top 10: 0.7
 
-Pairwise classification accuracy: 89.5892911469425%
+Pairwise classification accuracy: 98.29226244802757%

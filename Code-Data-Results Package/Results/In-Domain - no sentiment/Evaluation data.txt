@@ -14,15 +14,15 @@ Pairwise classification accuracy: N/A
 
 Logistic Regression:
 
-Chart RMSE: 35.212970210251186
-Chart RMSE (matches only): 18.100377231261742
+Chart RMSE: 35.21389912504415
+Chart RMSE (matches only): 18.091166976749875
 Overlap with actual chart: 0.93
 
 Top 10 RMSE: 74.06753674856482
 Top 10 RMSE (matches only): 2.160246899469287
 Overlap with actual top 10: 0.6
 
-Pairwise classification accuracy: 90.96418199419168%
+Pairwise classification accuracy: 98.36592449177154%
 
 Model coefficients:
 - Artist 1 LastPosition: -0.0726758
@@ -49,7 +49,7 @@ Top 10 RMSE: 80.29362780860426
 Top 10 RMSE (matches only): 2.4083189157584592
 Overlap with actual top 10: 0.5
 
-Pairwise classification accuracy: 91.74636979670862%
+Pairwise classification accuracy: 99.26040658276864%
 
 See DecisionTree.dot, DecisionTree.png for produced tree.
 
@@ -57,12 +57,12 @@ See DecisionTree.dot, DecisionTree.png for produced tree.
 
 AdaBoost Decision Tree (maxdepth=20, count=50)
 
-Chart RMSE: 21.09217864517556
-Chart RMSE (matches only): 21.09217864517556
+Chart RMSE: 22.06399782451041
+Chart RMSE (matches only): 22.06399782451041
 Overlap with actual chart: 1.0
 
-Top 10 RMSE: 66.08444481232966
-Top 10 RMSE (matches only): 1.0
+Top 10 RMSE: 67.10783514956758
+Top 10 RMSE (matches only): 1.7320508075688772
 Overlap with actual top 10: 0.7
 
-Pairwise classification accuracy: 91.58373668925461%
+Pairwise classification accuracy: 99.03969022265247%
