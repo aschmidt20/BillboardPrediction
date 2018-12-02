@@ -73,7 +73,7 @@ Pairwise classification accuracy: 99.46404422258368%
 
 
 
-AdaBoost Decision Tree (maxdepth=20, count=50)
+AdaBoost Decision Tree (maxdepth=4, count=50)
 
 Chart RMSE: 33.63377423410535
 Chart RMSE (matches only): 28.4308371315373
