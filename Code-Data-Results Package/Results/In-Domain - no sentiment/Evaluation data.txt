@@ -58,17 +58,17 @@ See DecisionTree.dot, DecisionTree.png for produced tree.
 
 
 
-Bagging Decision Tree (maxdepth=2, count=100)
+Bagging Decision Tree (maxdepth=4, count=50)
 
-Chart RMSE: 21.50209292138791
-Chart RMSE (matches only): 21.50209292138791
+Chart RMSE: 21.931256233968906
+Chart RMSE (matches only): 21.931256233968906
 Overlap with actual chart: 1.0
 
-Top 10 RMSE: 85.0011029340208
-Top 10 RMSE (matches only): 4.06201920231798
+Top 10 RMSE: 84.64336949814793
+Top 10 RMSE (matches only): 4.924428900898052
 Overlap with actual top 10: 0.4
 
-Pairwise classification accuracy: 99.34875140999993%
+Pairwise classification accuracy: 99.31260555524395%
 
 
 

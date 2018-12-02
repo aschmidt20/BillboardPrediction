@@ -1,10 +1,10 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import Perceptron
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import tree
-from sklearn.svm import SVC
 from sklearn import ensemble
 from sklearn.model_selection import train_test_split
 from itertools import combinations
@@ -15,12 +15,13 @@ import csv
 from os import listdir
 from os.path import isfile, join
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+import random
 
 ####################################################################################################################
 # 1) DATA LOADING
 #Load feature vector data into dataframe
 path = 'Feature Vectors - in.csv' # In-domain experiment
-#path = 'Feature Vectors - out.csv' # Out-of-domain experimenty
+#path = 'Feature Vectors - out.csv' # Out-of-domain experiment
 feature_vectors = pd.read_csv(path)
 
 dataByArtist = {}
@@ -65,21 +66,21 @@ def getData(artist1, artist2, dataByArtist):
         # Check whether chart position of artist 1 is greater than artist 2
         position1 = int(artist1_data[iter][5])
         position2 = int(artist2_data[iter][5])
-        #print(artist1 + ': ' + str(position1) + "  " + artist2 + ": " + str(position2))
+        #print(artist1 + ': ' + str(position1) + "  " + artist2 + ": " + str(position2))    
+        
+        X_list = [artist1_data[iter][1], artist1_data[iter][2], artist1_data[iter][3], artist1_data[iter][4], artist1_data[iter][6],
+                  artist2_data[iter][1], artist2_data[iter][2],
+                  artist2_data[iter][3], artist2_data[iter][4], artist2_data[iter][6]]
+        X.append(X_list)
         if position1 < position2:
-            #print(artist1 + " higher than " + artist2)
-            X_list = [artist1_data[iter][1], artist1_data[iter][2], artist1_data[iter][3], artist1_data[iter][4], artist1_data[iter][6],
-                      artist2_data[iter][1], artist2_data[iter][2],
-                      artist2_data[iter][3], artist2_data[iter][4], artist2_data[iter][6]]
-            X.append(X_list)
-            Y.append(True)
+            # print(artist1 + " higher than " + artist2)
+            Y.append(-1)
         elif position1 > position2:
             # print(artist2 + " higher than " + artist1)
-            X_list = [artist1_data[iter][1], artist1_data[iter][2], artist1_data[iter][3], artist1_data[iter][4], artist1_data[iter][6],
-                      artist2_data[iter][1], artist2_data[iter][2],
-                      artist2_data[iter][3], artist2_data[iter][4], artist2_data[iter][6]]
-            X.append(X_list)
-            Y.append(False)
+            Y.append(1)
+        else:
+            # print(artist1 + " and " + artist 2 + " did not chart")
+            Y.append(0)            
         iter += 1
 
     return X, Y
@@ -98,20 +99,20 @@ def getMostRecentData(artist1, artist2, dataByArtist):
         position1 = int(artist1_data[iter][5])
         position2 = int(artist2_data[iter][5])
         # print(artist1 + ': ' + str(position1) + "  " + artist2 + ": " + str(position2))
+        
+        X_list = [artist1_data[iter][1], artist1_data[iter][2], artist1_data[iter][3], artist1_data[iter][4], artist1_data[iter][6],
+                  artist2_data[iter][1], artist2_data[iter][2],
+                  artist2_data[iter][3], artist2_data[iter][4], artist2_data[iter][6]]
+        X.append(X_list)
         if position1 < position2:
             # print(artist1 + " higher than " + artist2)
-            X_list = [artist1_data[iter][1], artist1_data[iter][2], artist1_data[iter][3], artist1_data[iter][4], artist1_data[iter][6],
-                      artist2_data[iter][1], artist2_data[iter][2],
-                      artist2_data[iter][3], artist2_data[iter][4], artist2_data[iter][6]]
-            X.append(X_list)
-            Y.append(True)
+            Y.append(-1)
         elif position1 > position2:
             # print(artist2 + " higher than " + artist1)
-            X_list = [artist1_data[iter][1], artist1_data[iter][2], artist1_data[iter][3], artist1_data[iter][4], artist1_data[iter][6],
-                      artist2_data[iter][1], artist2_data[iter][2],
-                      artist2_data[iter][3], artist2_data[iter][4], artist2_data[iter][6]]
-            X.append(X_list)
-            Y.append(False)
+            Y.append(1)
+        else:
+            # print(artist1 + " and " + artist 2 + " did not chart")
+            Y.append(0)
         iter += 1
 
     return X, Y, artist_pair
@@ -119,6 +120,7 @@ def getMostRecentData(artist1, artist2, dataByArtist):
 ####################################################################################################################
 # 2) TRAIN/TEST CLASSIFIER
 artistList = [artist for artist in dataByArtist]
+random.shuffle(artistList) # Shuffle artists since they'll be in order of latest chart
 
 # Generate all possible combinations of artist comparisons
 combinations = list(combinations(artistList, 2))
@@ -156,50 +158,102 @@ for entry in combinations:
 
 # Create, train, and test classifier
 # LOGISTIC REGRESSION
-classifier = LogisticRegression(solver='liblinear')
-classifierName = "LogisticRegression"
+#classifier = LogisticRegression(solver='liblinear')
+#classifierName = "LogisticRegression"
 
 # DECISION TREE
-#classifier = DecisionTreeClassifier(max_depth=20)
+#classifier = DecisionTreeClassifier(max_depth=7)
 #classifierName = "DecisionTree"
 
+# DECISION TREE ENSEMBLE WITH BAGGING
+classifier = ensemble.BaggingClassifier(DecisionTreeClassifier(max_depth=4), n_estimators=50)
+classifierName = "BaggingDecisionTree"
+
 # DECISION TREE ENSEMBLE WITH ADABOOST
-#classifier = ensemble.AdaBoostClassifier(DecisionTreeClassifier(max_depth=20), n_estimators=50)
+#classifier = ensemble.AdaBoostClassifier(DecisionTreeClassifier(max_depth=4), n_estimators=50)
 #classifierName = "AdaBoostDecisionTree"
+
+# NAIVE BAYES
+#classifier = GaussianNB()
+#classifierName = "NaiveBayes"
+
 
 classifier.fit(X, Y)
 y_pred = classifier.predict(X_test)
 
 # Export logistic regression coefficients/decision tree
-print("LogisticRegression coefficients:")
-print(classifier.coef_)
+#print("LogisticRegression classes/coefficients:")
+#print(classifier.classes_)
+#print(classifier.coef_)
 #tree.export_graphviz(classifier, out_file='DecisionTree.dot')
 
-
 # Use classifier predictions for testing feature vectors to generate Artist 100
+
+# First, populate list with all unique artists
 iter = 0
 while iter < len(artist_pairs):
     pair = artist_pairs[iter]
     artist1 = pair[0]
     artist2 = pair[1]
+    
     if artist1 not in ranking:
         ranking.append(artist1)
     if artist2 not in ranking:
         ranking.append(artist2)
-    pred = y_pred[iter]
-    pos1 = ranking.index(artist1)
-    pos2 = ranking.index(artist2)
-    #if artist1 is predicted to be higher on the list then artist2
-    if pred == True:
-        #swap artist1 and artist2 on the ranking if the order is not already correct
-        if pos1 > pos2:
-            ranking[pos2], ranking[pos1] = ranking[pos1], ranking[pos2]
-    #if artist2 is predicted to be higher on the list than artist1
-    elif pred == False:
-        #swap artist1 and artist2 on the ranking if the order is not already correct
-        if pos2 > pos1:
-            ranking[pos2], ranking[pos1] = ranking[pos1], ranking[pos2]
+    
     iter += 1
+
+random.shuffle(ranking) # Shuffle artists randomly
+
+# Second, compare each pair and swap based on predictions - perform swapping until convergence or 100 swaps are done (should only have to do two iterations for convergence)
+swaps = 0
+convergence = False
+prevRanking = None
+
+iter = 0
+while convergence == False and swaps < 100:
+    while iter < len(artist_pairs):
+        pair = artist_pairs[iter]
+        artist1 = pair[0]
+        artist2 = pair[1]
+        
+        pred = y_pred[iter]
+        pos1 = ranking.index(artist1)
+        pos2 = ranking.index(artist2)
+        #if artist1 is predicted to be higher on the list then artist2
+        if pred == -1:
+            #swap artist1 and artist2 on the ranking if the order is not already correct
+            if pos1 > pos2:
+                ranking[pos2], ranking[pos1] = ranking[pos1], ranking[pos2]
+                
+        #if artist2 is predicted to be higher on the list than artist1
+        elif pred == 1:
+            #swap artist1 and artist2 on the ranking if the order is not already correct
+            if pos2 > pos1:
+                ranking[pos2], ranking[pos1] = ranking[pos1], ranking[pos2]
+                  
+        #if artists tied, i.e., neither charted, then move both to the end of the ranking
+        elif pred == 0:
+            ranking.remove(artist1)
+            ranking.remove(artist2)
+            ranking.append(artist1)
+            ranking.append(artist2)
+                
+        iter += 1
+        
+    if prevRanking != None:
+        sameAsPrev = True
+        
+        i = 0
+        for artist in ranking:
+            if (prevRanking[i] != ranking[i]):
+                sameAsPrev = False
+        
+        if sameAsPrev == True:
+            convergence = True
+            
+    prevRanking = ranking.copy()
+    swaps += 1
 
 iter = 1
 top100list = []
@@ -219,7 +273,7 @@ def chartRMSE(actualChart, predChart):
     iter = 1
     for artist in actualChart:      
         try:
-            predRank = predChart.index(artist)
+            predRank = predChart.index(artist) + 1
         except:
             predRank = 101
         
@@ -246,7 +300,7 @@ def chartRMSE_matchesOnly(actualChart, predChart):
     iter = 1
     for artist in actualChart:      
         try:
-            predRank = predChart.index(artist)
+            predRank = predChart.index(artist) + 1
         except:
             continue
         
@@ -255,7 +309,9 @@ def chartRMSE_matchesOnly(actualChart, predChart):
               
         iter += 1
             
-    rmse = math.sqrt(mean_squared_error(actualRanks,predRanks))
+    rmse = None
+    if len(actualRanks) > 0:
+        rmse = math.sqrt(mean_squared_error(actualRanks,predRanks))
     return rmse
 
 # Calculates proportion of chart entries shared between predicted and actual chart
@@ -263,21 +319,6 @@ def chartOverlap(actualChart, predChart):
     overlap = list(set(actualChart).intersection(set(predChart)))
     prop = float(len(overlap))/len(actualChart)
     return prop
-
-# Score accuracy of each pairwise prediction
-iter = 0
-correct = 0
-total = 0
-while iter < len(y_pred):
-    if y_pred[iter] == y_test[iter]:
-        correct += 1
-    total += 1
-    iter += 1
-percentage = (correct / total) * 100
-print("Current Week Predictions")
-print("Correct: " + str(correct))
-print("Total: " + str(total))
-print("Percentage Predicted: " + str(percentage) + "%\n")    
 
 # Evaluation, comparison of charts
 feature_vectors['ChartDate'] = pd.to_datetime(feature_vectors['ChartDate'])    
@@ -306,21 +347,36 @@ prevRMSETop10 = chartRMSE(actualChart['ArtistName'].tolist()[:10], prevChart['Ar
 prevRMSETop10MatchesOnly = chartRMSE_matchesOnly(actualChart['ArtistName'].tolist()[:10], prevChart['ArtistName'].tolist()[:10])
 prevOverlapTop10 = chartOverlap(actualChart['ArtistName'].tolist()[:10], prevChart['ArtistName'].tolist()[:10])
 
-print('Predicted chart RMSE: ' + str(predRMSE))
-print('Predicted chart RMSE (matches only): ' + str(predRMSEMatchesOnly))
-print('Predicted chart overlap with actual chart: ' + str(predOverlap) + '\n')
+print(classifierName + " Results")
+print('Chart RMSE: ' + str(predRMSE))
+print('Chart RMSE (matches only): ' + str(predRMSEMatchesOnly))
+print('Overlap with actual chart: ' + str(predOverlap) + '\n')
 
-print('Predicted top 10 RMSE: ' + str(predRMSETop10))
-print('Predicted top 10 RMSE (matches only): ' + str(predRMSETop10MatchesOnly))
-print('Predicted top 10 overlap with actual top 10: ' + str(predOverlapTop10)  + '\n')
+print('Top 10 RMSE: ' + str(predRMSETop10))
+print('Top 10 RMSE (matches only): ' + str(predRMSETop10MatchesOnly))
+print('Overlap with actual top 10: ' + str(predOverlapTop10)  + '\n')
 
-print('Previous chart baseline RMSE: ' + str(prevRMSE))
-print('Previous chart baseline RMSE (matches only): ' + str(prevRMSEMatchesOnly))
-print('Previous chart baseline overlap with actual chart: ' + str(prevOverlap)  + '\n')
+# Score accuracy of each pairwise prediction
+iter = 0
+correct = 0
+total = 0
+while iter < len(y_pred):
+    if y_pred[iter] == Y_test[iter]:
+        correct += 1
+    total += 1
+    iter += 1
+percentage = (correct / total) * 100
 
-print('Previous top 10 baseline RMSE: ' + str(prevRMSETop10))
-print('Previous top 10 baseline RMSE (matches only): ' + str(prevRMSETop10MatchesOnly))
-print('Previous top 10 baseline overlap with actual top 10: ' + str(prevOverlapTop10)  + '\n')
+print("Pairwise classification accuracy: " + str(percentage) + "%\n")  
+
+print("Baseline Results")
+print('Chart RMSE: ' + str(prevRMSE))
+print('Chart RMSE (matches only): ' + str(prevRMSEMatchesOnly))
+print('Overlap with actual chart: ' + str(prevOverlap)  + '\n')
+
+print('Top 10 RMSE: ' + str(prevRMSETop10))
+print('Top 10 RMSE (matches only): ' + str(prevRMSETop10MatchesOnly))
+print('Overlap with actual top 10: ' + str(prevOverlapTop10)  + '\n')
 
 with open(classifierName + ' predicted chart.csv', 'w+', newline='') as outputFile:
     outputWriter = csv.writer(outputFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
