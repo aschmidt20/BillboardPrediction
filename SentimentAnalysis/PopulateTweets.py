@@ -30,9 +30,10 @@ artist_list = ['QueenWillRock', 'kanebrown', 'Imaginedragons', 'ArianaGrande', '
 
 for artist in artist_list:
 
-    query = '@' + artist
+    query = "@" + artist
     #tweets = api.GetSearch(raw_query=query)
-    tweets = api.GetSearch(term=query, since='2018-11-10')
+    tweets = api.GetSearch(
+        raw_query="q=" + artist + "&count=100")
     tweet_list = []
     print(artist)
     for tweet in tweets:
