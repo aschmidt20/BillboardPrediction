@@ -1,0 +1,25 @@
+Previous Chart Baseline:
+
+Chart RMSE: 42.717677839508085
+Chart RMSE (matches only): 42.717677839508085
+Overlap with actual chart: 1.0
+
+Top 10 RMSE: 97.79698359356489
+Top 10 RMSE (matches only): None
+Overlap with actual top 10: 0.0
+
+Pairwise classification accuracy: N/A
+
+
+
+Sentiment Classifier:
+
+Chart RMSE: 40.42777723810441
+Chart RMSE (matches only): 14.953499351561254
+Overlap with actual chart: 0.84
+
+Top 10 RMSE: 40.42777723810441
+Top 10 RMSE (matches only): 14.953499351561254
+Overlap with actual top 10: 0.84
+
+Pairwise classification accuracy: N/A

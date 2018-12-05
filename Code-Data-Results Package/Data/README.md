@@ -1,11 +1,17 @@
-This directory contains 1 subdirectory and 5 other files:
+This directory contains 1 subdirectory and 6 other files.
+
+Raw data:
 - The Charts directory contains all the chart data used in the experiments. 
 	* For the in-domain experiments, charts for 2018-08-25 - 2018-11-03 were used for training, and the chart for 2018-11-10 was used for testing.
 	* For the out-of-domain experiments, charts for 2018-08-25 - 2018-11-10 were used for training, and the chart for 2018-11-17 was used for testing.
+	* For the sentiment experiment, the chart for 2018-12-08 was used for testing.
 - Artists.csv is a list of 568 artists who appeared on the Artist 100 between 2017-08-05 and 2018-11-10. It was produced by the getArtist100Pool.py script. This list serves as the domain of artists which our classifier is guaranteed to have seen in training, and has data for.
 - Followers.csv is a list of artist-date-Twitter followers triples collected from Next Big Sound through the getNbsData.py script. Each artist's Next Big Sound ID is also included, but this is never used. Data from 2018-08-14 through 2018-11-09 collected.
 - Mentions.csv is a list of artist-date-Twitter mentions triples collected from Next Big Sound through the getNbsData.py script. Each artist's Next Big Sound ID is also included, but this is never used. Data from 2018-08-14 through 2018-11-09 collected.
-- Feature Vectors - in.csv is a list of feature vectors from the featureVectorGenerator.py script for the chart weeks of 2018-08-25 - 2018-11-10. This file was used for the in-domain experiments.
+- Tweets.xlsx is a spreadsheet of the tweets we collected for our sentiment analysis experiment.
+
+Preprocessed data:
+- Feature Vectors - in.csv is a list of the feature vectors from the featureVectorGenerator.py script for the chart weeks of 2018-08-25 - 2018-11-10. This file was used for the in-domain experiments.
 - Feature Vectors - out.csv is a list of feature vectors from the featureVectorGenerator.py script for the chart weeks of 2018-08-25 - 2018-11-17. This file was used for the out-of-domain experiments, as the Artist 100 chart for 2018-11-17 may list artists which are not included in the domain of artists specified by Artists.csv.
 
 In both feature vector files, there is a feature vector per artist in Artists.csv per Artist 100 chart. Feature vectors each contain the following fields which are extracted or aggregated from other files:
